@@ -65,8 +65,9 @@ mkdir -p %{buildroot}/usr/share/push
 mkdir -p %{buildroot}%{_sysconfdir}/init.d
 mkdir -p %{buildroot}%{_sysconfdir}/rc.d/{rc3.d,rc5.d}
 mkdir -p %{buildroot}%{_libdir}/systemd/user/tizen-middleware.target.wants
+mkdir -p %{buildroot}/opt/etc/smack/accesses.d
 
-
+cp -a push-bin.rule %{buildroot}/opt/etc/smack/accesses.d
 %ifarch %{arm}
 #libpush
 cp -a arm/lib/libpush.so.* %{buildroot}%{_libdir}
@@ -168,6 +169,7 @@ vconftool set -t int    file/private/push-bin/port_sec -1 ${_GRP} -f
 /etc/rc.d/rc5.d/S90pushd
 /usr/lib/systemd/user/pushd.service
 /usr/lib/systemd/user/tizen-middleware.target.wants/pushd.service
+/opt/etc/smack/accesses.d/push-bin.rule
 
 %files tool
 %manifest push-tool.manifest

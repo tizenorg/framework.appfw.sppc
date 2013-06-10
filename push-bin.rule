@@ -1,0 +1,5 @@
+push-service _ w
+push-service push-service::db rw
+push-service system::vconf arwx
+push-service device::app_logging r
+push-service device::sys_logging r
