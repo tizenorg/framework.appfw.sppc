@@ -6,3 +6,5 @@ push-service device::sys_logging r
 
 push-service data-provider-master::notification rw
 push-service data-provider-master::badge rw
+push-service data-provider-master::notification.client w
+push-service data-provider-master::badge.client w
