@@ -4,6 +4,9 @@ push-service system::vconf arwx
 push-service sys-assert::core rwxat
 push-service device::app_logging rw
 push-service device::sys_logging rw
+push-service ail::db rw
+push-service badge::db rw
+push-service deviced w
 
 push-service data-provider-master::notification rw
 push-service data-provider-master::badge rw
