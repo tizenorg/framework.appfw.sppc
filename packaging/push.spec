@@ -56,7 +56,8 @@ Push service tool
 
 %install
 rm -rf %{buildroot}
-
+mkdir -p %{buildroot}/usr/share/license
+cp %{_builddir}/%{name}-%{version}/LICENSE.Flora  %{buildroot}/usr/share/license/%{name}
 
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_libdir}/pkgconfig
@@ -162,6 +163,7 @@ vconftool set -t int    file/private/push-bin/port_sec -1 ${_GRP} -f
 
 %files bin
 %manifest push-bin.manifest
+/usr/share/license/%{name}
 %{_bindir}/pushd
 /usr/share/push/*.cer
 /etc/init.d/pushd
