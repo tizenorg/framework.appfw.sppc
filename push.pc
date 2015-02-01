@@ -11,4 +11,3 @@ Version: 0.2.12
 Requires: capi-appfw-application
 Libs: -L${libdir} -lpush
 Cflags: -I${includedir}
-

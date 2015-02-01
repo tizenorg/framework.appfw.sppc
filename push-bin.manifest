@@ -1,10 +1,37 @@
 <manifest>
-	<define> 
-		<domain name="push-service" policy="restricted" plist="push-bin,push-tool,libpush"/>
+	<define>
+		<domain name="push-service" policy="restricted" plist="push-bin"/>
+		<request>
+			<smack request="system::use_internet" type="rw"/>
+			<smack request="sys-assert::core" type="rwxat"/>
+			<smack request="telephony_framework::api_modem" type="r"/>
+			<smack request="telephony_framework::api_sim" type="r"/>
+			<smack request="telephony_framework::api_network" type="r"/>
+			<smack request="pkgmgr::info" type = "r"/>
+			<smack request="pkgmgr::db" type = "rlx"/>
+			<smack request="ail::db" type = "rlx"/>
+			<smack request="data-provider-master::notification" type="rw"/>
+			<smack request="data-provider-master::notification.client" type="w"/>
+			<smack request="data-provider-master::badge" type="rw"/>
+			<smack request="data-provider-master::badge.client" type="w"/>
+			<smack request="connman" type="rw" />
+			<smack request="net-config" type="rw" />
+			<smack request="connman::get" type="rw" />
+			<smack request="telephony_framework::api_ps_public" type="rw" />
+			<smack request="deviced::display" type="rw" />
+			<smack request="secure-storage" type="rw" />
+			<smack request="security-server::api-privilege-by-pid" type="w"/>
+			<smack request="alarm-server::alarm" type = "w"/>
+		</request>
+		<permit>
+			<smack permit="system::use_internet" type="w"/>
+			<smack permit="dbus" type="rx"/>
+		</permit>
 		<provide>
 			<label name="push-service::db"/>
+			<label name="push-service::push"/>
 		</provide>
-	</define> 
+	</define>
 	<request>
 		<domain name="push-service"/>
 	</request>
@@ -12,7 +39,5 @@
 		<filesystem path="/etc/init.d/pushd" label="_" exec_label="none"/>
 		<filesystem path="/etc/rc.d/rc3.d/S90pushd" label="_" exec_label="none"/>
 		<filesystem path="/etc/rc.d/rc5.d/S90pushd" label="_" exec_label="none"/>
-		<filesystem path="/usr/lib/systemd/user/pushd.service" label="_" exec_label="none" />
-		<filesystem path="/usr/lib/systemd/user/tizen-middleware.target.wants/pushd.service" label="_" exec_label="none" />
 	</assign>
 </manifest>
