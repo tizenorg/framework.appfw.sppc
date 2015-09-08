@@ -1,23 +1,34 @@
-Name:       push
-Summary:    Push services and client library.
-Version:    0.2.23
-Release:    1
-Group:      TO_BE_FILLED
-License:    TO_BE_FILLED
-Source0:    %{name}-%{version}.tar.gz
+%global _support_weblog 0
 
+Name:       push
+Summary:    Push services and client library..
+Version:    0.4.06
+Release:    1
+Group:      Application Framwork/Service
+License:    Apache-2.0
+Source0:    %{name}-%{version}.tar.gz
+Source1:    pushd.service
+Requires(post): /sbin/ldconfig
+Requires(post): /usr/bin/sqlite3
+Requires(post): /usr/bin/vconftool
+Requires(postun): /sbin/ldconfig
+
+%if %{_support_weblog}
+BuildRequires:  pkgconfig(zlib)
+BuildRequires:  pkgconfig(json-glib-1.0)
+%endif
 
 %description
 Push services and client library.
 
 %package -n libpush
 Summary:    Push service client library
-Group:      TO_BE_FILLED
+Group:      Application Framwork/Libraries
+Requires:   %{name}-bin = %{version}-%{release}
 Provides:   libpush.so.0
 
 %description -n libpush
 Push service client library
-
 
 %package -n libpush-devel
 Summary:    Push service client library (DEV)
@@ -28,14 +39,13 @@ Requires:   capi-appfw-application-devel
 %description -n libpush-devel
 Push service client library (DEV)
 
-
 %package bin
 Summary:    Push service daemon
-Group:      TO_BE_FILLED
+Group:      Application Framwork/Service
+Requires(post): telephony-daemon
 
 %description bin
 Push service daemon
-
 
 %package tool
 Summary:    Push service tool
@@ -46,8 +56,6 @@ Requires:   %{name}-bin = %{version}-%{release}
 %description tool
 Push service tool
 
-
-
 %prep
 %setup -q
 
@@ -55,87 +63,80 @@ Push service tool
 
 %install
 rm -rf %{buildroot}
+mkdir -p %{buildroot}%{_libdir}/systemd/system/multi-user.target.wants
+install -m 0644 %{SOURCE1} %{buildroot}%{_libdir}/systemd/system/pushd.service
+ln -s ../pushd.service %{buildroot}%{_libdir}/systemd/system/multi-user.target.wants/pushd.service
 
+mkdir -p %{buildroot}/usr/lib/systemd/user/tizen-middleware.target.wants
+cp %{SOURCE1} %{buildroot}/usr/lib/systemd/user/pushd.service
+ln -s ../pushd.service %{buildroot}/usr/lib/systemd/user/tizen-middleware.target.wants/
 
-mkdir -p %{buildroot}%{_bindir}
-mkdir -p %{buildroot}%{_libdir}/pkgconfig
+mkdir -p %{buildroot}/usr/share/license
+cp -f LICENSE %{buildroot}/usr/share/license/%{name}
+
+%if %{_support_weblog}
+cp -a share/push/push_sslkey.pem %{buildroot}/usr/share/push/
+cp -a share/push/prd-dl-key.pem %{buildroot}/usr/share/push/
+%endif
+
 mkdir -p %{buildroot}%{_includedir}
-mkdir -p %{buildroot}/usr/share/push
-mkdir -p %{buildroot}%{_sysconfdir}/init.d
-mkdir -p %{buildroot}%{_sysconfdir}/rc.d/{rc3.d,rc5.d}
-mkdir -p %{buildroot}%{_libdir}/systemd/user/tizen-middleware.target.wants
+cp -a include/push-service.h %{buildroot}%{_includedir}
+cp -a include/push.h %{buildroot}%{_includedir}
+%if %{_support_weblog}
+	include/pushlog.h %{buildroot}%{_includedir}
+%endif
 
+mkdir -p %{buildroot}%{_libdir}/pkgconfig
+cp -a push.pc %{buildroot}%{_libdir}/pkgconfig/
+
+mkdir -p %{buildroot}/usr/share/push/
+mkdir -p %{buildroot}%{_bindir}
 
 %ifarch %{arm}
 #libpush
 cp -a arm/lib/libpush.so.* %{buildroot}%{_libdir}
-#libpush-devel
-cp -a arm/include/push.h %{buildroot}%{_includedir}
-cp -a arm/lib/pkgconfig/push.pc %{buildroot}%{_libdir}/pkgconfig/push.pc
+#libpus-devel
 cp -a arm/lib/libpush.so %{buildroot}%{_libdir}
 #push-bin
 cp -a arm/bin/pushd %{buildroot}%{_bindir}
-cp -a arm/share/push/PushServerTrust.cer %{buildroot}/usr/share/push/PushServerTrust.cer
-cp -a arm/etc/init.d/pushd %{buildroot}%{_sysconfdir}/init.d/pushd
-cp -a arm/etc/rc.d/rc3.d/S90pushd %{buildroot}%{_sysconfdir}/rc.d/rc3.d/S90pushd
-cp -a arm/etc/rc.d/rc5.d/S90pushd %{buildroot}%{_sysconfdir}/rc.d/rc5.d/S90pushd
-cp -a arm/lib/systemd/user/pushd.service %{buildroot}%{_libdir}/systemd/user/pushd.service
-cp -a arm/lib/systemd/user/tizen-middleware.target.wants/pushd.service %{buildroot}%{_libdir}/systemd/user/tizen-middleware.target.wants/pushd.service
-#push-tool
 cp -a arm/bin/push_tool %{buildroot}%{_bindir}
+cp -a arm/share/push/*.cer %{buildroot}/usr/share/push/
+%if %{_support_weblog}
+	arm/bin/pushlog_tool
+%endif
 %else
 #libpush
 cp -a x86/lib/libpush.so.* %{buildroot}%{_libdir}
-#libpush-devel
-cp -a x86/include/push.h %{buildroot}%{_includedir}
-cp -a x86/lib/pkgconfig/push.pc %{buildroot}%{_libdir}/pkgconfig/push.pc
+#libpus-devel
 cp -a x86/lib/libpush.so %{buildroot}%{_libdir}
 #push-bin
 cp -a x86/bin/pushd %{buildroot}%{_bindir}
-cp -a x86/share/push/PushServerTrust.cer %{buildroot}/usr/share/push/PushServerTrust.cer
-cp -a x86/etc/init.d/pushd %{buildroot}%{_sysconfdir}/init.d/pushd
-cp -a x86/etc/rc.d/rc3.d/S90pushd %{buildroot}%{_sysconfdir}/rc.d/rc3.d/S90pushd
-cp -a x86/etc/rc.d/rc5.d/S90pushd %{buildroot}%{_sysconfdir}/rc.d/rc5.d/S90pushd
-cp -a x86/lib/systemd/user/pushd.service %{buildroot}%{_libdir}/systemd/user/pushd.service
-cp -a x86/lib/systemd/user/tizen-middleware.target.wants/pushd.service %{buildroot}%{_libdir}/systemd/user/tizen-middleware.target.wants/pushd.service
-#push-tool
 cp -a x86/bin/push_tool %{buildroot}%{_bindir}
+cp -a x86/share/push/*.cer %{buildroot}/usr/share/push/
+%if %{_support_weblog}
+	x86/bin/pushlog_tool
+%endif
 %endif
 
+
 %post bin
-mkdir -p /opt/dbspace
-sqlite3 /opt/dbspace/.push.db "PRAGMA journal_mode = PERSIST; create table a(a); drop table a;" > /dev/null
-chown root:5000 /opt/dbspace/.push.db
-chown root:5000 /opt/dbspace/.push.db-journal
-chmod 660 /opt/dbspace/.push.db
-chmod 660 /opt/dbspace/.push.db-journal
+mkdir -p /opt/usr/dbspace
+sqlite3 /opt/usr/dbspace/.push.db "PRAGMA journal_mode = PERSIST; create table a(a); drop table a;" > /dev/null
+chown root:5000 /opt/usr/dbspace/.push.db
+chown root:5000 /opt/usr/dbspace/.push.db-journal
+chmod 660 /opt/usr/dbspace/.push.db
+chmod 660 /opt/usr/dbspace/.push.db-journal
 
-
-_VER="1"
-_DEV_TYPE="00000000"
-_DEV_INFO="device.model=ssltest"
-_IP_PV="gld.push.samsungosp.com"
-_PORT_PV=5223
-#ping interval {120,240,480,960,1920}
-_PING_INT=480
-_GRP="-g 5000"
-
-vconftool set -t string file/private/push-bin/version ${_VER} ${_GRP} -f
-vconftool set -t string file/private/push-bin/dev_type ${_DEV_TYPE} ${_GRP} -f
-vconftool set -t string file/private/push-bin/dev_info ${_DEV_INFO} ${_GRP} -f
-vconftool set -t string file/private/push-bin/ip_pv ${_IP_PV} ${_GRP} -f
-vconftool set -t int    file/private/push-bin/port_pv ${_PORT_PV} ${_GRP} -f
-vconftool set -t int    file/private/push-bin/ping_int ${_PING_INT} ${_GRP} -f
-
-vconftool unset file/private/push-bin/devtk
+chsmack -a 'push-service::db' /opt/usr/dbspace/.push.db
+chsmack -a 'push-service::db' /opt/usr/dbspace/.push.db-journal
 
 %post -n libpush
 /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
 
-
 %files -n libpush
+%manifest libpush.manifest
 %attr(644,-,-) %{_libdir}/libpush.so.*
 
 %files -n libpush-devel
@@ -144,18 +145,37 @@ vconftool unset file/private/push-bin/devtk
 %{_libdir}/libpush.so
 
 %files bin
+%manifest push-bin.manifest
 %{_bindir}/pushd
 /usr/share/push/*.cer
-/etc/init.d/pushd
-/etc/rc.d/rc3.d/S90pushd
-/etc/rc.d/rc5.d/S90pushd
+/usr/share/license/%{name}
+
+# This is a certificate file to access to logging server by HTTPS.
+%if %{_support_weblog}
+/usr/share/push/push_sslkey.pem
+/usr/share/push/prd-dl-key.pem
+%endif
+
 /usr/lib/systemd/user/pushd.service
 /usr/lib/systemd/user/tizen-middleware.target.wants/pushd.service
+%{_libdir}/systemd/system/multi-user.target.wants/pushd.service
+%{_libdir}/systemd/system/pushd.service
 
 %files tool
+%manifest push-tool.manifest
 %{_bindir}/push_tool
 
+%if %{_support_weblog}
+	%{_bindir}/pushlog_tool
+%endif
+
 %changelog
+* Sat Nov 3 2012 Jooseok Park <jooseok.park@samsung.com> - 0.2.26
+- Prevent bug fixed(out-of bounds read, dead code,..)
+* Mon Oct 22 2012 Jooseok Park <jooseok.park@samsung.com> - 0.2.25
+- bundle null check added & protobuf null check added
+* Wed Sep 19 2012 Jooseok Park <jooseok.park@samsung.com> - 0.2.24
+- when pkg is uninstlled, db process is added
 * Fri Sep 7 2012 Jooseok Park <jooseok.park@samsung.com> - 0.2.23
 - emul check logic is changed(using capi-system-info)
 * Tue Sep 4 2012 Jooseok Park <jooseok.park@samsung.com> - 0.2.22

@@ -1,9 +1,12 @@
 [Unit]
-Description=Pushd service
+Description=Push daemon
+After=tizen-runtime.target
 
 [Service]
 Type=forking
 ExecStart=/usr/bin/pushd
+Restart=always
+MemoryLimit=10M
 
 [Install]
-WantedBy=tizen-middleware.target
+WantedBy=multi-user.target
