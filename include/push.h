@@ -46,6 +46,7 @@ typedef enum {
 	PUSH_ERROR_NO_DATA = TIZEN_ERROR_NO_DATA,  /**< No data available */
 	PUSH_ERROR_OPERATION_FAILED = TIZEN_ERROR_UNKNOWN, /**< Internal operation failed */
 	PUSH_ERROR_PERMISSION_DENIED = TIZEN_ERROR_PERMISSION_DENIED, /**< No privilege to access the push service */
+	PUSH_ERROR_NOT_SUPPORTED = TIZEN_ERROR_NOT_SUPPORTED, /**< Push not supported */
 } push_error_e;
 
 /**

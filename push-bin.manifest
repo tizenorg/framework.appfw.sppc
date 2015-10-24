@@ -7,24 +7,38 @@
 			<smack request="telephony_framework::api_modem" type="r"/>
 			<smack request="telephony_framework::api_sim" type="r"/>
 			<smack request="telephony_framework::api_network" type="r"/>
+			<smack request="telephony_framework::api_ps_public" type="r"/>
+			<smack request="telephony_framework::properties" type="rw"/>
 			<smack request="pkgmgr::info" type = "r"/>
 			<smack request="pkgmgr::db" type = "rlx"/>
-			<smack request="ail::db" type = "rlx"/>
 			<smack request="data-provider-master::notification" type="rw"/>
 			<smack request="data-provider-master::notification.client" type="w"/>
 			<smack request="data-provider-master::badge" type="rw"/>
 			<smack request="data-provider-master::badge.client" type="w"/>
 			<smack request="connman" type="rw" />
-			<smack request="net-config" type="rw" />
 			<smack request="connman::get" type="rw" />
-			<smack request="telephony_framework::api_ps_public" type="rw" />
+			<smack request="connman::profile" type="rw" />
+			<smack request="net-config" type="rw" />
 			<smack request="deviced::display" type="rw" />
 			<smack request="secure-storage" type="rw" />
 			<smack request="security-server::api-privilege-by-pid" type="w"/>
 			<smack request="alarm-server::alarm" type = "w"/>
+			<smack request="device::app_logging" type = "rw"/>
+			<smack request="device::sys_logging" type = "rw"/>
+			<smack request="push-service::db" type = "rw"/>
+			<smack request="badge::db" type = "rl"/>
+			<smack request="aul::launch" type = "x"/>
+			<smack request="sdbd" type = "r"/>
+			<smack request="privilege::tizen::packagemanager.info" type="rw"/>
+			<smack request="tizen::vconf::setting::admin" type = "rl"/>
+			<smack request="tizen::vconf::public::r" type = "rl"/>
+			<smack request="tizen::vconf::public::r::platform::rw" type = "rl"/>
 		</request>
 		<permit>
 			<smack permit="system::use_internet" type="w"/>
+			<smack permit="telephony_framework" type="rw"/>
+			<smack permit="secure-storage" type="w"/>
+			<smack permit="data-provider-master::bin" type="w"/>
 			<smack permit="dbus" type="rx"/>
 		</permit>
 		<provide>
