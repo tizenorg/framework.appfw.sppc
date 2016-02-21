@@ -2,15 +2,14 @@
 
 Name:       push
 Summary:    Push services and client library..
-Version:    0.4.06
-Release:    1
+Version:    0.4.13
+Release:    2
 Group:      Application Framwork/Service
 License:    Apache-2.0
 Source0:    %{name}-%{version}.tar.gz
 Source1:    pushd.service
 Requires(post): /sbin/ldconfig
 Requires(post): /usr/bin/sqlite3
-Requires(post): /usr/bin/vconftool
 Requires(postun): /sbin/ldconfig
 
 %if %{_support_weblog}
@@ -122,8 +121,8 @@ cp -a x86/share/push/*.cer %{buildroot}/usr/share/push/
 %post bin
 mkdir -p /opt/usr/dbspace
 sqlite3 /opt/usr/dbspace/.push.db "PRAGMA journal_mode = PERSIST; create table a(a); drop table a;" > /dev/null
-chown root:5000 /opt/usr/dbspace/.push.db
-chown root:5000 /opt/usr/dbspace/.push.db-journal
+chown system:5000 /opt/usr/dbspace/.push.db
+chown system:5000 /opt/usr/dbspace/.push.db-journal
 chmod 660 /opt/usr/dbspace/.push.db
 chmod 660 /opt/usr/dbspace/.push.db-journal
 
@@ -137,7 +136,7 @@ chsmack -a 'push-service::db' /opt/usr/dbspace/.push.db-journal
 
 %files -n libpush
 %manifest libpush.manifest
-%attr(644,-,-) %{_libdir}/libpush.so.*
+%attr(644,system,system)%{_libdir}/libpush.so.*
 
 %files -n libpush-devel
 %{_includedir}/*.h
@@ -146,20 +145,20 @@ chsmack -a 'push-service::db' /opt/usr/dbspace/.push.db-journal
 
 %files bin
 %manifest push-bin.manifest
-%{_bindir}/pushd
-/usr/share/push/*.cer
-/usr/share/license/%{name}
+%attr(755,system,system)%{_bindir}/pushd
+%attr(644,system,system)/usr/share/push/*.cer
+%attr(644,system,system)/usr/share/license/%{name}
 
 # This is a certificate file to access to logging server by HTTPS.
 %if %{_support_weblog}
-/usr/share/push/push_sslkey.pem
-/usr/share/push/prd-dl-key.pem
+%attr(644,system,system)/usr/share/push/push_sslkey.pem
+%attr(644,system,system)/usr/share/push/prd-dl-key.pem
 %endif
 
-/usr/lib/systemd/user/pushd.service
-/usr/lib/systemd/user/tizen-middleware.target.wants/pushd.service
-%{_libdir}/systemd/system/multi-user.target.wants/pushd.service
-%{_libdir}/systemd/system/pushd.service
+%attr(755,system,system)/usr/lib/systemd/user/pushd.service
+%attr(755,system,system)/usr/lib/systemd/user/tizen-middleware.target.wants/pushd.service
+%attr(755,system,system)%{_libdir}/systemd/system/multi-user.target.wants/pushd.service
+%attr(755,system,system)%{_libdir}/systemd/system/pushd.service
 
 %files tool
 %manifest push-tool.manifest
