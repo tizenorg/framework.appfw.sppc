@@ -2,15 +2,14 @@
 
 Name:       push
 Summary:    Push services and client library..
-Version:    0.4.06
-Release:    1
+Version:    0.4.13
+Release:    2
 Group:      Application Framwork/Service
 License:    Apache-2.0
 Source0:    %{name}-%{version}.tar.gz
 Source1:    pushd.service
 Requires(post): /sbin/ldconfig
 Requires(post): /usr/bin/sqlite3
-Requires(post): /usr/bin/vconftool
 Requires(postun): /sbin/ldconfig
 
 %if %{_support_weblog}
